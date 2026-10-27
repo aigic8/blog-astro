@@ -5,6 +5,7 @@ import remarkGithubAlerts from "remark-github-alerts"
 
 // https://astro.build/config
 export default defineConfig({
+	site: "https://example.com",
 	markdown: {
 		remarkPlugins: [remarkGithubAlerts],
 		syntaxHighlight: "shiki",

@@ -117,3 +117,8 @@
 .astro-code {
 	background: var(--color-surface) !important;
 }
+
+/* Cascadia Code runs larger than average fonts; scale the whole type system down slightly */
+html {
+	font-size: 15px;
+}

@@ -36,7 +36,15 @@ const formatDate = (date: Date): string =>
 	</header>
 
 	<section id="posts" class="pt-24 scroll-mt-24">
-		<h2 class="text-2xl font-bold uppercase">posts</h2>
+		<div class="flex items-center justify-between">
+			<h2 class="text-2xl font-bold uppercase">posts</h2>
+			<a
+				href="/posts.xml"
+				class="text-muted hover:text-text cursor-pointer rounded-lg border border-transparent px-2 py-1 text-sm hover:border-ink/25"
+			>
+				rss ↓
+			</a>
+		</div>
 		<div class="mt-4 space-y-3">
 			{
 				posts.map((post) => (
@@ -61,24 +69,36 @@ const formatDate = (date: Date): string =>
 	</section>
 
 	<section id="notes" class="pt-10 scroll-mt-24">
-		<h2 class="text-2xl font-bold uppercase">notes</h2>
+		<div class="flex items-center justify-between">
+			<h2 class="text-2xl font-bold uppercase">notes</h2>
+			<a
+				href="/notes.xml"
+				class="text-muted hover:text-text cursor-pointer rounded-lg border border-transparent px-2 py-1 text-sm hover:border-ink/25"
+			>
+				rss ↓
+			</a>
+		</div>
 		<div class="mt-4 grid gap-3 pb-16 sm:grid-cols-2">
 			{
-				notes.map((note) => (
-					<article>
+				renderedNotes.map(({ note, Content }) => (
+					<article class="bg-surface rounded-lg group relative block cursor-pointer p-4" data-note-index={notes.indexOf(note)}>
 						<a
 							href={`/notes/${note.id}/`}
-							data-note-index={notes.indexOf(note)}
-							class="bg-surface rounded-lg group block p-4"
+							class="absolute inset-0 rounded-lg hover:bg-paper/10"
 						>
-							<time class="text-muted text-xs" datetime={note.data.pubDate.toISOString()}>
-								{formatDate(note.data.pubDate)}
-							</time>
-							<h3 class="text-text group-hover:underline mt-1 text-base leading-snug font-bold">
-								{note.data.title}
-							</h3>
-							<p class="text-ink mt-3 line-clamp-3 text-sm leading-7">{note.body}</p>
+							<span class="sr-only">{note.data.title}</span>
 						</a>
+						<time class="relative text-muted text-xs" datetime={note.data.pubDate.toISOString()}>
+							{formatDate(note.data.pubDate)}
+						</time>
+						<h3 class="text-text group-hover:underline relative mt-1 text-base leading-snug font-bold">
+							{note.data.title}
+						</h3>
+						<div
+							class="prose prose-invert relative mt-3 line-clamp-3 max-w-none text-sm leading-7 prose-p:my-0 prose-p:text-ink prose-ol:my-0 prose-ul:my-0 prose-code:text-ink"
+						>
+							<Content />
+						</div>
 					</article>
 				))
 			}
@@ -189,10 +209,13 @@ const formatDate = (date: Date): string =>
 
 				const popup = document.getElementById("note-popup") as HTMLElement
 
-		document.querySelectorAll<HTMLElement>("[data-note-index]").forEach((a) => {
-			a.addEventListener("click", (e) => {
+		document.querySelectorAll<HTMLElement>("article[data-note-index]").forEach((article) => {
+			article.addEventListener("click", (e) => {
+				if (e.target instanceof Element && e.target.closest("a") && !e.target.closest("a[data-note-index], a[aria-label]")) {
+					return
+				}
 				e.preventDefault()
-				show(Number(a.dataset.noteIndex), true)
+				show(Number(article.dataset.noteIndex), true)
 			})
 		})
 
