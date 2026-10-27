@@ -1,6 +1,7 @@
 ---
 import { getCollection, render } from "astro:content"
 import Layout from "../layouts/Layout.astro"
+import { withBase } from "../lib/withBase"
 
 const posts = (await getCollection("posts")).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -28,7 +29,7 @@ const formatDate = (date: Date): string =>
 		<div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
 			<h1 class="text-lg font-bold tracking-tight uppercase sm:text-xl">aigic8 blog</h1>
 			<nav class="flex gap-6 text-sm uppercase sm:text-base">
-			<a href="/" class="hover:bg-ink hover:text-paper -mx-2 px-2">home</a>
+			<a href={withBase("/")} class="hover:bg-ink hover:text-paper -mx-2 px-2">home</a>
 			<a href="#posts" class="hover:bg-ink hover:text-paper -mx-2 px-2">posts</a>
 			<a href="#notes" class="hover:bg-ink hover:text-paper -mx-2 px-2">notes</a>
 		</nav>
@@ -39,7 +40,7 @@ const formatDate = (date: Date): string =>
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-bold uppercase">posts</h2>
 			<a
-				href="/posts.xml"
+				href={`${withBase("/posts.xml")}`}
 				class="text-muted hover:text-text cursor-pointer rounded-lg border border-transparent px-2 py-1 text-sm hover:border-ink/25"
 			>
 				rss ↓
@@ -50,7 +51,7 @@ const formatDate = (date: Date): string =>
 				posts.map((post) => (
 					<article>
 						<a
-							href={`/posts/${post.id}/`}
+							href={withBase(`/posts/${post.id}/`)}
 							class="bg-surface rounded-lg group flex gap-4 p-5"
 						>
 							<div class="flex-1">
@@ -72,7 +73,7 @@ const formatDate = (date: Date): string =>
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-bold uppercase">notes</h2>
 			<a
-				href="/notes.xml"
+				href={`${withBase("/notes.xml")}`}
 				class="text-muted hover:text-text cursor-pointer rounded-lg border border-transparent px-2 py-1 text-sm hover:border-ink/25"
 			>
 				rss ↓
@@ -83,7 +84,7 @@ const formatDate = (date: Date): string =>
 				renderedNotes.map(({ note, Content }) => (
 					<article class="bg-surface rounded-lg group relative block cursor-pointer p-4" data-note-index={notes.indexOf(note)}>
 						<a
-							href={`/notes/${note.id}/`}
+							href={withBase(`/notes/${note.id}/`)}
 							class="absolute inset-0 rounded-lg hover:bg-paper/10"
 						>
 							<span class="sr-only">{note.data.title}</span>

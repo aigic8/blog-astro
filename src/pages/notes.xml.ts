@@ -1,6 +1,7 @@
 import rss from "@astrojs/rss"
 import type { APIRoute } from "astro"
 import { getCollection } from "astro:content"
+import { withBase } from "../lib/withBase"
 
 export const GET: APIRoute = async (context) => {
 	const notes = (await getCollection("notes")).sort(
@@ -16,7 +17,7 @@ export const GET: APIRoute = async (context) => {
 			title: note.data.title,
 			description: note.body,
 			pubDate: note.data.pubDate,
-			link: `/#note-${note.id}`,
+			link: withBase(`/#note-${note.id}`),
 		})),
 	})
 }

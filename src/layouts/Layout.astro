@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css"
+import { withBase } from "../lib/withBase"
 
 interface Props {
 	title: string
@@ -26,8 +27,8 @@ const { title, description, type = "website", publishedTime } = Astro.props
 		<meta name="twitter:card" content="summary" />
 		<meta name="twitter:title" content={title} />
 		<meta name="twitter:description" content={description} />
-		<link rel="alternate" type="application/rss+xml" title="posts" href="/posts.xml" />
-		<link rel="alternate" type="application/rss+xml" title="notes" href="/notes.xml" />
+		<link rel="alternate" type="application/rss+xml" title="posts" href={`${withBase("/posts.xml")}`} />
+		<link rel="alternate" type="application/rss+xml" title="notes" href={`${withBase("/notes.xml")}`} />
 		<title>{title}</title>
 	</head>
 	<body class="bg-paper text-ink min-h-screen font-mono antialiased">
