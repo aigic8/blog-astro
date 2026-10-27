@@ -4,4 +4,10 @@ description: "Why I ditched my SPA framework for static HTML, and what content c
 pubDate: 2025-08-02
 ---
 
-Draft content for the second post.
+# Why static
+
+Every SPA I ever shipped died the same death: too much JavaScript for too little content. Moving to Astro gave me plain HTML again, and content collections made the markdown pipeline boring in the best way.
+
+## Content collections
+
+Type-safe frontmatter, build-time validation, one file per post. That is all I need.

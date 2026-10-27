@@ -4,4 +4,6 @@ description: "An attempt to stop hoarding links in an ever-growing bookmarks fol
 pubDate: 2025-07-19
 ---
 
-Draft content for the third post.
+# Publishing as memory
+
+A bookmarks folder is a graveyard. A public note is a bookmark with a heartbeat, so I started publishing short notes instead of hoarding links.

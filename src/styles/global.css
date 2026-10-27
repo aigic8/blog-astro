@@ -4,10 +4,116 @@
 
 @theme {
 	--color-paper: #35293d;
-	--color-ink: #fcf7ff;
+	--color-ink: #e6d6f2;
 	--color-muted: #b3a3c2;
-	--color-body: #ede0f9;
+	--color-text: #f2e4ff;
 	--color-surface: #4b4053;
 	--font-mono:
 		"Cascadia Code Variable", "Cascadia Code", "Iosevka", SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.markdown-alert {
+	margin: 1rem 0;
+	padding: 0.75rem 1rem;
+	border-radius: 8px;
+	border-left: 4px solid var(--color-muted);
+	background: var(--color-surface);
+}
+
+.markdown-alert p {
+	margin: 0.25rem 0 0;
+}
+
+.markdown-alert-title {
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	margin-bottom: 0.25rem;
+}
+
+.markdown-alert-note {
+	border-left-color: #8fa7e0;
+	color: #8fa7e0;
+}
+.markdown-alert-note .markdown-alert-title {
+	color: #8fa7e0;
+}
+
+.markdown-alert-tip {
+	border-left-color: #93c9a4;
+	color: #93c9a4;
+}
+.markdown-alert-tip .markdown-alert-title {
+	color: #93c9a4;
+}
+
+.markdown-alert-important {
+	border-left-color: #c99ade;
+	color: #c99ade;
+}
+.markdown-alert-important .markdown-alert-title {
+	color: #c99ade;
+}
+
+.markdown-alert-warning {
+	border-left-color: #e0b78f;
+	color: #e0b78f;
+}
+.markdown-alert-warning .markdown-alert-title {
+	color: #e0b78f;
+}
+
+.markdown-alert-caution {
+	border-left-color: #e08f96;
+	color: #e08f96;
+}
+.markdown-alert-caution .markdown-alert-title {
+	color: #e08f96;
+}
+
+.prose ul li::marker,
+.prose ol li::marker {
+	color: #ca98f3;
+}
+
+.prose input[type="checkbox"] {
+	appearance: none;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 4px;
+	border: 1px solid var(--color-muted);
+	background: var(--color-surface);
+	vertical-align: middle;
+}
+
+.prose input[type="checkbox"]:checked {
+	border-color: #ca98f3;
+	background-color: #ca98f3;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2335293d' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 8.5l3.5 3.5L13 5'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 80%;
+}
+
+.prose :where(code):not(pre code) {
+	background: var(--color-surface);
+	border: 1px solid color-mix(in srgb, var(--color-muted) 35%, transparent);
+	border-radius: 6px;
+	color: var(--color-ink);
+	padding: 0.05em 0.35em;
+	font-weight: 400;
+}
+
+.prose :where(code):not(pre code)::before,
+.prose :where(code):not(pre code)::after {
+	content: none;
+}
+
+.prose :where(a):not(:where([class~="not-prose"] *)) {
+	text-underline-offset: 8px;
+}
+
+.astro-code {
+	background: var(--color-surface) !important;
 }

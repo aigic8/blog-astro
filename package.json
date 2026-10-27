@@ -18,9 +18,11 @@
 		"tailwindcss": "^4.3.3"
 	},
 	"devDependencies": {
+		"@astrojs/markdown-remark": "^7.3.4",
 		"oxfmt": "^0.74.0",
 		"oxlint": "^1.89.0",
-		"oxlint-tsgolint": "^7.0.2005"
+		"oxlint-tsgolint": "^7.0.2005",
+		"remark-github-alerts": "^0.1.1"
 	},
 	"engines": {
 		"node": ">=22.23.4"
