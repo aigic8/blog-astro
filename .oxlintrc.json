@@ -1,0 +1,28 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"options": {
+		"typeAware": true,
+		"typeCheck": true
+	},
+	"ignorePatterns": ["node_modules/**"],
+	"plugins": ["typescript", "oxc"],
+	"categories": {
+		"correctness": "error"
+	},
+	"rules": {
+		"no-unused-expressions": "error",
+		"no-unused-vars": "error",
+		"no-unreachable": "error",
+		"no-param-reassign": "error",
+		"import/no-commonjs": "error",
+		"typescript/explicit-function-return-type": "error",
+		"typescript/no-namespace": "error",
+		"typescript/no-var-requires": "error",
+		"typescript/promise-function-async": "error",
+		"prefer-const": "warn",
+		"no-console": "error"
+	},
+	"env": {
+		"builtin": true
+	}
+}

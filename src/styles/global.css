@@ -1,0 +1,13 @@
+@import "@fontsource-variable/cascadia-code";
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+	--color-paper: #35293d;
+	--color-ink: #fcf7ff;
+	--color-muted: #b3a3c2;
+	--color-body: #ede0f9;
+	--color-surface: #4b4053;
+	--font-mono:
+		"Cascadia Code Variable", "Cascadia Code", "Iosevka", SFMono-Regular, Menlo, Consolas, monospace;
+}

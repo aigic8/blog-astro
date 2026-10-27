@@ -1,0 +1,79 @@
+---
+import { getCollection } from "astro:content"
+import Layout from "../layouts/Layout.astro"
+
+const posts = (await getCollection("posts")).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
+
+const notes = (await getCollection("notes")).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
+
+const formatDate = (date: Date): string =>
+	date
+		.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+		.toUpperCase()
+---
+
+<Layout title="aigic8 blog" description="A blog about code, security, and whatever else">
+	<header class="border-ink/25 bg-paper/90 fixed inset-x-0 top-0 z-10 border-b backdrop-blur-sm">
+		<div class="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
+			<h1 class="text-lg font-bold tracking-tight uppercase sm:text-xl">aigic8 blog</h1>
+			<nav class="flex gap-6 text-sm uppercase sm:text-base">
+			<a href="/" class="hover:bg-ink hover:text-paper -mx-2 px-2">home</a>
+			<a href="#posts" class="hover:bg-ink hover:text-paper -mx-2 px-2">posts</a>
+			<a href="#notes" class="hover:bg-ink hover:text-paper -mx-2 px-2">notes</a>
+		</nav>
+		</div>
+	</header>
+
+	<section id="posts" class="pt-24 scroll-mt-24">
+		<h2 class="text-2xl font-bold uppercase">posts</h2>
+		<div class="mt-4 space-y-3">
+			{
+				posts.map((post) => (
+					<article>
+						<a
+							href={`/posts/${post.id}/`}
+							class="bg-surface rounded-lg group flex gap-4 p-5"
+						>
+							<div class="flex-1">
+								<p class="text-muted text-xs">{formatDate(post.data.pubDate)}</p>
+								<h3 class="text-2xl leading-snug font-bold group-hover:underline sm:text-3xl">
+									{post.data.title}
+								</h3>
+								<p class="text-body mt-2 line-clamp-3 text-sm leading-7">{post.data.description}</p>
+								<p class="text-body mt-3 text-sm group-hover:underline underline-offset-2">read →</p>
+							</div>
+						</a>
+					</article>
+				))
+			}
+		</div>
+	</section>
+
+	<section id="notes" class="pt-10 scroll-mt-24">
+		<h2 class="text-2xl font-bold uppercase">notes</h2>
+		<div class="mt-4 grid gap-3 pb-16 sm:grid-cols-2">
+			{
+				notes.map((note) => (
+					<article>
+						<a
+							href={`/notes/${note.id}/`}
+							class="bg-surface rounded-lg group block p-4"
+						>
+							<time class="text-muted text-xs" datetime={note.data.pubDate.toISOString()}>
+								{formatDate(note.data.pubDate)}
+							</time>
+							<h3 class="group-hover:underline mt-1 text-base leading-snug font-bold">
+								{note.data.title}
+							</h3>
+							<p class="text-body mt-3 line-clamp-3 text-sm leading-7">{note.body}</p>
+						</a>
+					</article>
+				))
+			}
+		</div>
+	</section>
+</Layout>

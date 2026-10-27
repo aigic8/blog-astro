@@ -1,0 +1,26 @@
+---
+import "../styles/global.css"
+
+interface Props {
+	title: string
+	description: string
+}
+
+const { title, description } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="bg-paper text-ink min-h-screen font-mono antialiased">
+		<div class="mx-auto flex min-h-screen max-w-3xl flex-col px-6 pt-10 pb-16">
+			<slot />
+		</div>
+	</body>
+</html>
