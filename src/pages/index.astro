@@ -1,5 +1,5 @@
 ---
-import { getCollection } from "astro:content"
+import { getCollection, render } from "astro:content"
 import Layout from "../layouts/Layout.astro"
 
 const posts = (await getCollection("posts")).sort(
@@ -8,6 +8,13 @@ const posts = (await getCollection("posts")).sort(
 
 const notes = (await getCollection("notes")).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+)
+
+const renderedNotes = await Promise.all(
+	notes.map(async (note) => {
+		const { Content } = await render(note)
+		return { note, Content }
+	}),
 )
 
 const formatDate = (date: Date): string =>
@@ -61,6 +68,7 @@ const formatDate = (date: Date): string =>
 					<article>
 						<a
 							href={`/notes/${note.id}/`}
+							data-note-index={notes.indexOf(note)}
 							class="bg-surface rounded-lg group block p-4"
 						>
 							<time class="text-muted text-xs" datetime={note.data.pubDate.toISOString()}>
@@ -76,4 +84,135 @@ const formatDate = (date: Date): string =>
 			}
 		</div>
 	</section>
+
+<div id="note-overlay" class="bg-black/10 pointer-events-none fixed inset-0 z-20 opacity-0 backdrop-blur-[8px] transition-opacity duration-150">
+		<div
+			id="note-popup"
+			class="bg-surface pointer-events-auto fixed top-1/2 left-1/2 max-w-md max-h-3/4 w-[calc(100%-3rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-xl p-6"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby="note-popup-title"
+		>
+			<button
+				type="button"
+				id="note-close"
+				aria-label="close"
+				class="border-ink/30 hover:border-ink/70 hover:text-text absolute top-3 right-3 cursor-pointer rounded-lg border px-2 py-0.5 text-sm"
+			>
+				✕
+			</button>
+			<p id="note-popup-date" class="text-muted text-xs"></p>
+			<h3 id="note-popup-title" class="text-text pr-8 text-xl leading-snug font-bold">
+				&nbsp;
+			</h3>
+			<div
+				id="note-popup-body"
+				class="text-ink mt-3 max-w-none prose prose-invert prose-p:text-ink prose-li:text-ink prose-headings:font-bold prose-headings:uppercase prose-headings:text-text prose-strong:text-text prose-code:text-ink prose-a:[color:#ca98f3]"
+			></div>
+			<div class="border-ink/20 mt-6 flex items-center justify-between border-t-2 pt-4">
+				<button
+					type="button"
+					id="note-prev"
+					aria-label="previous note"
+					class="hover:bg-ink hover:text-paper cursor-pointer rounded-lg px-3 py-1 text-sm uppercase disabled:text-muted disabled:opacity-40"
+				>
+					← prev
+				</button>
+				<span class="text-muted text-xs uppercase" id="note-popup-count"></span>
+				<button
+					type="button"
+					id="note-next"
+					aria-label="next note"
+					class="hover:bg-ink hover:text-paper cursor-pointer rounded-lg px-3 py-1 text-sm uppercase disabled:text-muted disabled:opacity-40"
+				>
+					next →
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="note-html-store" class="hidden" aria-hidden="true">
+		{
+			renderedNotes.map(({ note, Content }) => (
+				<div
+					id={`note-html-${note.id}`}
+					class="prose prose-invert prose-headings:font-bold prose-headings:uppercase prose-headings:text-text prose-p:text-ink prose-strong:text-text prose-code:text-ink prose-a:[color:#ca98f3] prose-li:text-ink max-w-none"
+				>
+					<Content />
+				</div>
+			))
+		}
+	</div>
+
+	<script type="application/json" id="notes-data" set:html={JSON.stringify(notes.map((n) => ({ id: n.id, title: n.data.title, date: formatDate(n.data.pubDate), body: n.body ?? "" })))} />
+
+	<script>
+		type NoteData = { id: string; title: string; date: string; body: string }
+
+		const notesData = JSON.parse(document.getElementById("notes-data")?.textContent ?? "[]") as NoteData[]
+		const overlay = document.getElementById("note-overlay") as HTMLElement
+		const OVERLAY_CLASSES = ["opacity-0", "pointer-events-none", "invisible"]
+		let current = -1
+
+		const parseHash = (): number => {
+			if (!window.location.hash.startsWith("#note-")) return -1
+			const id = window.location.hash.slice(6)
+			return notesData.findIndex((n) => n.id === id)
+		}
+
+		const show = (index: number, push: boolean): void => {
+			const target = index < 0 ? -1 : ((index % notesData.length) + notesData.length) % notesData.length
+			if (target === current) return
+			current = target
+			if (target < 0) {
+				for (const cls of OVERLAY_CLASSES) overlay.classList.add(cls)
+				document.body.classList.remove("overflow-hidden")
+				if (push) window.history.pushState({ note: null }, "", "#notes")
+				else window.history.replaceState({ note: null }, "", "#notes")
+				return
+			}
+			const note = notesData[target]
+			document.getElementById("note-popup-date")!.textContent = note.date
+			document.getElementById("note-popup-title")!.textContent = note.title
+			document.getElementById("note-popup-body")!.innerHTML =
+				document.getElementById(`note-html-${note.id}`)?.innerHTML ?? ""
+			document.getElementById("note-popup-count")!.textContent = `${target + 1}/${notesData.length}`
+			document.getElementById("note-prev")!.disabled = target === 0
+			document.getElementById("note-next")!.disabled = target === notesData.length - 1
+			popup.scrollTop = 0
+			for (const cls of OVERLAY_CLASSES) overlay.classList.remove(cls)
+			document.body.classList.add("overflow-hidden")
+			const url = "#note-" + note.id
+			if (push) window.history.pushState({ note: note.id }, "", url)
+			else window.history.replaceState({ note: note.id }, "", url)
+		}
+
+				const popup = document.getElementById("note-popup") as HTMLElement
+
+		document.querySelectorAll<HTMLElement>("[data-note-index]").forEach((a) => {
+			a.addEventListener("click", (e) => {
+				e.preventDefault()
+				show(Number(a.dataset.noteIndex), true)
+			})
+		})
+
+		document.getElementById("note-close")?.addEventListener("click", () => show(-1, true))
+		document.getElementById("note-prev")?.addEventListener("click", () => show(Math.max(0, current - 1), false))
+		document.getElementById("note-next")?.addEventListener("click", () => show(Math.min(notesData.length - 1, current + 1), false))
+		overlay.addEventListener("click", () => show(-1, true))
+		popup.addEventListener("click", (e) => e.stopPropagation())
+
+		document.addEventListener("keydown", (e) => {
+			if (current < 0) return
+			if (e.key === "Escape") show(-1, true)
+			else if (e.key === "ArrowLeft") show(Math.max(0, current - 1), false)
+			else if (e.key === "ArrowRight") show(Math.min(notesData.length - 1, current + 1), false)
+		})
+
+		window.addEventListener("popstate", () => show(parseHash(), false))
+
+		const initial = parseHash()
+		if (initial >= 0) show(initial, false)
+	</script>
+
 </Layout>
