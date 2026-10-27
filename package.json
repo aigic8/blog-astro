@@ -1,5 +1,6 @@
 {
 	"name": "visible-virgo",
+	"packageManager": "pnpm@10.12.4",
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
